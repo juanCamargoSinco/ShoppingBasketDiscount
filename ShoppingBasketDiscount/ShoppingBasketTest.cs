@@ -11,6 +11,7 @@ namespace ShoppingBasketDiscount
 
             //Assert
             Assert.Equal(0, cesta.ObtenerCantidadItem("Item A"));
+            //Tambien se podria cambiar a que si consulto un item que no esta en la lista devuelva excepcion
         }
 
         [Fact]
@@ -18,12 +19,13 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
+            var item = new Item("Item A", 1, 10);
 
             //Act
-            cesta.AgregarItem("Item A", 1, 10);
+            cesta.AgregarItem(item);
 
             //Assert
-            Assert.Equal(1, cesta.ObtenerCantidadItem("Item A"));
+            Assert.Equal(1, cesta.ObtenerCantidadItem(item.Nombre));
         }
 
 
@@ -32,12 +34,14 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
+            var item = new Item("Item A", -1, 10);
 
             //Act
-            var action = () => cesta.AgregarItem("Item A", -1, 10);
+            var agregarItem = () => cesta.AgregarItem(item);
 
             //Assert
-            Assert.Throws<ArgumentException>(action);
+            var exception = Assert.Throws<ArgumentException>(agregarItem);
+            Assert.Equal("Cantidad invalida", exception.Message);
         }
 
         [Fact]
@@ -45,27 +49,30 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
+            var item = new Item("Item A", 1, -10);
 
             //Act
-            var action = () => cesta.AgregarItem("Item A", 1, -10);
+            var agregarItem = () => cesta.AgregarItem(item);
 
             //Assert
-            Assert.Throws<ArgumentException>(action);
+            var exception = Assert.Throws<ArgumentException>(agregarItem);
+            Assert.Equal("Precio invalido", exception.Message);
         }
 
         [Fact]
-        public void Si_AgregoSieteItemA_Debe_MostrarCantidadItemAEnSiete()
+        public void Si_AgregoTresItemA_Debe_MostrarCantidadItemAEnTres()
         {
             //Arrange
             var cesta = new CestaCompras();
+            var item = new Item("Item A", 1, 10);
 
             //Act
-            cesta.AgregarItem("Item A", 1, 10);
-            cesta.AgregarItem("Item A", 4, 10);
-            cesta.AgregarItem("Item A", 2, 10);
+            cesta.AgregarItem(item);
+            cesta.AgregarItem(item);
+            cesta.AgregarItem(item);
 
             //Assert
-            Assert.Equal(7, cesta.ObtenerCantidadItem("Item A"));
+            Assert.Equal(3, cesta.ObtenerCantidadItem(item.Nombre));
         }
 
         [Fact]
@@ -73,15 +80,17 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
+            var item = new Item("Item A", 1, 10);
 
             //Act
-            cesta.AgregarItem("Item A", 1, 10);
-            cesta.AgregarItem("Item A", 1, 10);
-            cesta.AgregarItem("Item A", 1, 10);
-            cesta.AgregarItem("Item A", 1, 10);
+            cesta.AgregarItem(item);
+            cesta.AgregarItem(item);
+            cesta.AgregarItem(item);
+            cesta.AgregarItem(item);
 
             //Assert
-            Assert.Equal(1, cesta.Items.Count(x => x.Nombre == "Item A"));
+            int cantidadRepeticionesElementoEnCesta = cesta.Items.Count(x => x.Nombre == item.Nombre);
+            Assert.Equal(1, cantidadRepeticionesElementoEnCesta);
 
         }
 
@@ -90,7 +99,8 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
-            cesta.AgregarItem("Item A", 1, 10);
+            var item = new Item("Item A", 1, 10);
+            cesta.AgregarItem(item);
 
             //Assert
             Assert.Equal(10, cesta.CalcularPrecioTotalCesta());
@@ -101,11 +111,14 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
+            var itemA = new Item("Item A", 2, 10);
+            var itemB = new Item("Item B", 2, 20);
+            var itemC = new Item("Item C", 1, 15);
 
             //Act
-            cesta.AgregarItem("Item A", 2, 10);
-            cesta.AgregarItem("Item B", 2, 20);
-            cesta.AgregarItem("Item C", 1, 15);
+            cesta.AgregarItem(itemA);
+            cesta.AgregarItem(itemB);
+            cesta.AgregarItem(itemC);
 
             //Assert
             Assert.Equal(75, cesta.CalcularPrecioTotalCesta());
@@ -116,9 +129,12 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
-            cesta.AgregarItem("Item A", 5, 10);
-            cesta.AgregarItem("Item B", 3, 20);
-            cesta.AgregarItem("Item C", 1, 30);
+            var itemA = new Item("Item A", 5, 10);
+            var itemB = new Item("Item B", 3, 20);
+            var itemC = new Item("Item C", 1, 30);
+            cesta.AgregarItem(itemA);
+            cesta.AgregarItem(itemB);
+            cesta.AgregarItem(itemC);
 
 
             //Assert
@@ -130,7 +146,8 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
-            cesta.AgregarItem("Item A", 10, 10);
+            var item = new Item("Item A", 10, 10);
+            cesta.AgregarItem(item);
 
             //Assert
             Assert.Equal(100, cesta.CalcularPrecioTotalCesta());
@@ -141,9 +158,12 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
-            cesta.AgregarItem("Item A", 10, 10);
-            cesta.AgregarItem("Item B", 5, 20);
-            cesta.AgregarItem("Item C", 1, 30);
+            var itemA = new Item("Item A", 10, 10);
+            var itemB = new Item("Item B", 5, 20);
+            var itemC = new Item("Item C", 1, 30);
+            cesta.AgregarItem(itemA);
+            cesta.AgregarItem(itemB);
+            cesta.AgregarItem(itemC);
 
 
             //Assert
@@ -155,7 +175,8 @@ namespace ShoppingBasketDiscount
         {
             //Arrange
             var cesta = new CestaCompras();
-            cesta.AgregarItem("Item A", 20, 10);
+            var itemA = new Item("Item A", 20, 10);
+            cesta.AgregarItem(itemA);
 
             //Assert
             Assert.Equal(190, cesta.CalcularPrecioTotalCesta());

@@ -5,21 +5,20 @@ public class CestaCompras
     private readonly List<Item> _items = [];
     public IReadOnlyList<Item> Items => _items;
 
-    public void AgregarItem(string nombre, int cantidad, int precio)
+    public void AgregarItem(Item item)
     {
-        ValidarItem(cantidad, precio);
+        ValidarItem(item);
 
-        var itemExistente = _items.FirstOrDefault(x => x.Nombre == nombre);
+        var itemExistente = _items.FirstOrDefault(x => x.Nombre == item.Nombre);
 
         if (itemExistente != null)
         {
-            itemExistente.AumentarCantidad(cantidad);
+            itemExistente.AumentarCantidad(item.Cantidad);
         }
         else
         {
-            _items.Add(new Item(nombre, cantidad, precio));
+            _items.Add(new Item(item.Nombre, item.Cantidad, item.PrecioUnitario));
         }
-
     }
 
 
@@ -30,7 +29,7 @@ public class CestaCompras
 
     public decimal CalcularPrecioTotalCesta()
     {
-        var subTotal = _items.Sum(x => x.PrecioUnitario * x.Cantidad);
+        var subTotal = _items.Sum(x => x.PrecioTotal);
         var tasaDescuento = ObtenerTasaDescuento(subTotal);
         var valorDescuento = subTotal * tasaDescuento;
         var total = subTotal - valorDescuento;
@@ -46,12 +45,12 @@ public class CestaCompras
             _ => 0m
         };
     }
-    private static void ValidarItem(int cantidad, int precio)
+    private static void ValidarItem(Item item)
     {
-        if (precio < 0)
+        if (item.PrecioUnitario < 0)
             throw new ArgumentException("Precio invalido");
 
-        if (cantidad < 0)
+        if (item.Cantidad < 0)
             throw new ArgumentException("Cantidad invalida");
     }
 
